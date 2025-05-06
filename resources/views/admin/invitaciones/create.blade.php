@@ -1,0 +1,58 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h2>Crear Invitación</h2>
+    <form action="{{ route('invitaciones.store') }}" method="POST">
+        @csrf
+        <input type="hidden" name="evento_id" value="{{$evento->id}}">
+        {{--
+        <div class="mb-3">
+            <label class="form-label">Evento</label>
+            <select name="evento_id" class="form-control" required>
+                @foreach($eventos as $evento)
+                    <option value="{{ $evento->id }}">{{ $evento->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+        --}}
+        <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" name="nombre" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Comentario</label>
+            <textarea name="comentario" class="form-control"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Correo</label>
+            <input type="email" name="correo" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Teléfono</label>
+            <input type="text" name="telefono" class="form-control">
+        </div>
+
+        <h4>Invitados</h4>
+        <div id="invitados">
+            <div class="mb-3 invitado">
+                <input type="text" name="invitados[]" class="form-control mb-2" placeholder="Nombre del invitado">
+            </div>
+        </div>
+        <button type="button" class="btn btn-secondary mb-3" onclick="agregarInvitado()">Agregar otro invitado</button>
+
+        <button type="submit" class="btn btn-primary">Guardar Invitación</button>
+    </form>
+</div>
+
+<script>
+    function agregarInvitado() {
+        const contenedor = document.getElementById('invitados');
+        const input = document.createElement('input');
+        input.name = 'invitados[]';
+        input.placeholder = 'Nombre del invitado';
+        input.className = 'form-control mb-2';
+        contenedor.appendChild(input);
+    }
+</script>
+@endsection

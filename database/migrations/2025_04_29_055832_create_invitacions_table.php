@@ -16,6 +16,9 @@ class CreateInvitacionsTable extends Migration
             $table->string('correo')->nullable();
             $table->string('telefono')->nullable();
             $table->string('tokenid')->unique();
+            // En migración de invitaciones
+            $table->integer('boletos')->default(1);
+            $table->boolean('confirmado')->default(false); // o puede ser nullable si manejas por invitado
             $table->softDeletes();
             $table->timestamps();
         });

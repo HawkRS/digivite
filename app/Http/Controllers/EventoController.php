@@ -3,10 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Evento;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 class EventoController extends Controller
 {
+    private $f = 'admin.evento.';
+
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     /**
      * Display a listing of the resource.
@@ -15,7 +25,11 @@ class EventoController extends Controller
      */
     public function index()
     {
-        //
+        $evento = Evento::first();
+        //dd($evento);
+        return view($this->f.'index', [
+          'evento' =>$evento
+        ]);
     }
 
     /**
@@ -25,7 +39,7 @@ class EventoController extends Controller
      */
     public function create()
     {
-        //
+        return view($this->f.'create');
     }
 
     /**
@@ -34,18 +48,38 @@ class EventoController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $evento = Evento::create($request->validate([
-            'nombre' => 'required|string|max:255',
-            'fecha' => 'required|date',
-            'tipo' => 'required|string|max:255',
-            'horario' => 'required',
-            'ubicacion' => 'required|string|max:255',
-        ]));
+     public function store(Request $request)
+     {
+       //dd($request->all());
+       //$token = str_random(10);
+       do {
+         $token = Str::random(10);
+       } while (Evento::where("token", "=", $token)->first() instanceof Reparaciones);
+       //dd($token);
+       $request->merge(['token' => $token]);
+       //dd($request->all());
+       $evento = Evento::create($request->validate([
+         'nombre' => 'required|string|max:255',
+         'fecha' => 'required|date',
+         'tipo' => 'required|string|max:255',
+         'horario' => 'required',
+         'token' => 'required',
+         'ubicacion' => 'required|string|max:255',
+       ]));
 
-        return response()->json($evento, 201);
-    }
+       $url = route('confirmar.token');
+
+       // Generar QR como imagen PNG
+      //$qrImage = QrCode::format('png')->size(300)->generate($url);
+       $qrSvg = QrCode::format('svg')->size(300)->generate($url);
+
+       // Guardarlo en /storage/app/public/qrs/{evento_id}.png
+       //Storage::put("public/qrs/{$evento->id}.png", $qrImage);
+       Storage::put("public/qrs/{$evento->id}.svg", $qrSvg);
+
+       return redirect()->route('eventos.index');
+       return response()->json($evento, 201);
+     }
 
     /**
      * Display the specified resource.

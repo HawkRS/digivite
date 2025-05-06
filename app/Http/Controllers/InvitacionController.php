@@ -1,20 +1,34 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use App\Models\Invitacion;
+use App\Models\Invitados;
+use App\Models\Evento;
+use Carbon\Carbon;
 
 class InvitacionController extends Controller
 {
+  private $f = 'admin.invitaciones.';
+
+  public function __construct()
+  {
+      $this->middleware('auth')->except(['confirmarPublica', 'guardarConfirmacion']);
+  }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+     public function index()
+     {
+         $invitaciones = Invitacion::with('evento')->latest()->get();
+         //dd($invitaciones);
+         return view($this->f.'index', compact('invitaciones'));
+     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -23,7 +37,10 @@ class InvitacionController extends Controller
      */
     public function create()
     {
-        //
+      $evento = Evento::first();
+      return view($this->f.'create', [
+        'evento' =>$evento
+      ]);
     }
 
     /**
@@ -33,21 +50,38 @@ class InvitacionController extends Controller
      * @return \Illuminate\Http\Response
      */
      public function store(Request $request)
-         {
-             $validated = $request->validate([
-                 'evento_id' => 'required|exists:eventos,id',
-                 'nombre' => 'required|string|max:255',
-                 'comentario' => 'nullable|string',
-                 'correo' => 'nullable|email',
-                 'telefono' => 'nullable|string|max:20',
-             ]);
+     {
+         $validated = $request->validate([
+             'evento_id' => 'required|exists:eventos,id',
+             'nombre' => 'required|string|max:255',
+             'comentario' => 'nullable|string',
+             'correo' => 'nullable|email',
+             'telefono' => 'nullable|string|max:20',
+             'invitados' => 'required|array|min:1',
+             'invitados.*' => 'required|string|max:255',
+         ]);
 
-             $validated['tokenid'] = Str::uuid(); // genera un UUID único
+         $validated['tokenid'] = Str::uuid(Str::random(8)); // genera un UUID único
 
-             $invitacion = Invitacion::create($validated);
+         // Crear la invitación
+         $invitacion = Invitacion::create($validated);
+         $numboletos = 0;
 
-             return response()->json($invitacion, 201);
+         // Crear los invitados asociados
+         foreach ($request->invitados as $nombreInvitado) {
+             if (trim($nombreInvitado) !== '') {
+                 $numboletos += 1;
+                 $invitacion->invitados()->create([
+                     'nombre' => $nombreInvitado,
+                     'confirmado' => false,
+                 ]);
+             }
          }
+         $invitacion->boletos = $numboletos;
+         $invitacion->save();
+
+         return redirect()->route('invitaciones.index')->with('success', 'Invitación creada correctamente');
+     }
 
     /**
      * Display the specified resource.
@@ -93,4 +127,33 @@ class InvitacionController extends Controller
     {
         //
     }
+
+    public function confirmarPublica($tokenid)
+    {
+      $invitacion = Invitacion::where('tokenid', $tokenid)->with('invitados')->firstOrFail();
+        return view($this->f.'confirmacion', compact('invitacion'));
+    }
+
+    public function guardarConfirmacion(Request $request, $tokenid)
+    {
+        $invitacion = Invitacion::where('tokenid', $tokenid)->with('invitados')->firstOrFail();
+        $confirmados = $request->input('confirmados', []);
+        //dd($request->all());
+        $numboletos = 0;
+        foreach ($invitacion->invitados as $invitado) {
+            // Solo actualizar si aún no estaba confirmado
+            if (!$invitado->confirmado && in_array($invitado->id, $confirmados)) {
+                $invitado->confirmado = true;
+                $invitado->save();
+                $numboletos += 1;
+            }
+        }
+        $invitacion->boletos = $numboletos;
+        $invitacion->confirmado = true;
+        $invitacion->save();
+
+        return redirect()->back()->with('success', '¡Confirmación guardada correctamente!');
+    }
+
+
 }

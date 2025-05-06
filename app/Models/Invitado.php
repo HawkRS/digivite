@@ -12,6 +12,9 @@ class Invitado extends Model
     use SoftDeletes;
 
     protected $fillable = ['invitacion_id', 'nombre'];
+    protected $casts = [
+        'confirmado' => 'boolean',
+    ];
 
     public function invitacion()
     {

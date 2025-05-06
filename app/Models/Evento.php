@@ -11,7 +11,7 @@ class Evento extends Model
     use SoftDeletes;
     use HasFactory;
 
-    protected $fillable = ['nombre', 'fecha', 'tipo', 'horario', 'ubicacion'];
+    protected $fillable = ['nombre', 'fecha', 'tipo', 'horario', 'ubicacion','token'];
 
     public function invitaciones()
     {

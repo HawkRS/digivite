@@ -10,8 +10,9 @@ class CreateInvitadosTable extends Migration
     {
         Schema::create('invitados', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('invitacion_id')->constrained('invitacions')->onDelete('cascade');
+            $table->foreignId('invitacion_id')->constrained('invitaciones')->onDelete('cascade');
             $table->string('nombre');
+            $table->boolean('confirmado')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
