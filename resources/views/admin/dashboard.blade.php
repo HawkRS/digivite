@@ -4,11 +4,14 @@
     <div class="container">
       <div class="row justify-content-center">
         <div class="col-md-4">
+          <h2>Evento</h2>
+          @if($evento != null)
           <p>{{$evento->tipo}} de {{$evento->nombre}}</p>
           <p>{{$evento->fecha}}</p>
           <p>{{$evento->horario}}</p>
           <p>{{$evento->ubicacion}}</p>
-    <img src="{{ asset('storage/qrs/' . $evento->id . '.svg') }}" alt="Código QR">
+          <img src="{{ asset('storage/qrs/' . $evento->id . '.svg') }}" alt="Código QR">
+          @endif
         </div>
         <div class="col-md-8">
           <h2>Invitaciones</h2>
