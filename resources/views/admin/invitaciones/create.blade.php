@@ -21,6 +21,10 @@
             <input type="text" name="nombre" class="form-control" required>
         </div>
         <div class="mb-3">
+            <label class="form-label">Invitado Ancla</label>
+            <input type="text" name="invitado_ancla" class="form-control" required>
+        </div>
+        <div class="mb-3">
             <label class="form-label">Comentario</label>
             <textarea name="comentario" class="form-control"></textarea>
         </div>

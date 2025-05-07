@@ -51,36 +51,51 @@ class InvitacionController extends Controller
      */
      public function store(Request $request)
      {
-         $validated = $request->validate([
-             'evento_id' => 'required|exists:eventos,id',
-             'nombre' => 'required|string|max:255',
-             'comentario' => 'nullable|string',
-             'correo' => 'nullable|email',
-             'telefono' => 'nullable|string|max:20',
-             'invitados' => 'required|array|min:1',
-             'invitados.*' => 'required|string|max:255',
-         ]);
+       $validated = $request->validate([
+           'evento_id' => 'required|exists:eventos,id',
+           'nombre' => 'required|string|max:255', // nombre de la invitación
+           'comentario' => 'nullable|string',
+           'correo' => 'nullable|email',
+           'telefono' => 'nullable|string|max:20',
+           'invitado_ancla' => 'required|string|max:255',
+           'invitados' => 'nullable|array',
+           'invitados.*' => 'nullable|string|max:255',
+       ]);
 
-         $validated['tokenid'] = Str::uuid(Str::random(8)); // genera un UUID único
 
-         // Crear la invitación
-         $invitacion = Invitacion::create($validated);
-         $numboletos = 0;
+       $validated['tokenid'] = Str::random(8); // token sencillo
 
-         // Crear los invitados asociados
+       // Crear la invitación
+       $invitacion = Invitacion::create($validated);
+
+       // Crear invitado ancla
+       $invitacion->invitados()->create([
+         'nombre' => $validated['invitado_ancla'],
+         'confirmado' => false,
+         'es_ancla' => true,
+       ]);
+
+       $numboletos = 1; // ya se cuenta el ancla
+
+       // Crear acompañantes
+       if (!empty($request->invitados)) {
          foreach ($request->invitados as $nombreInvitado) {
-             if (trim($nombreInvitado) !== '') {
-                 $numboletos += 1;
-                 $invitacion->invitados()->create([
-                     'nombre' => $nombreInvitado,
-                     'confirmado' => false,
-                 ]);
-             }
+           if (trim($nombreInvitado) !== '') {
+             $numboletos += 1;
+             $invitacion->invitados()->create([
+               'nombre' => $nombreInvitado,
+               'confirmado' => false,
+               'es_ancla' => false,
+             ]);
+           }
          }
-         $invitacion->boletos = $numboletos;
-         $invitacion->save();
+       }
 
-         return redirect()->route('invitaciones.index')->with('success', 'Invitación creada correctamente');
+       $invitacion->boletos = $numboletos;
+       $invitacion->save();
+
+       return redirect()->route('invitaciones.index')->with('success', 'Invitación creada correctamente');
+
      }
 
     /**

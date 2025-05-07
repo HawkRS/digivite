@@ -12,7 +12,7 @@ class CreateInvitadosTable extends Migration
             $table->id();
             $table->foreignId('invitacion_id')->constrained('invitaciones')->onDelete('cascade');
             $table->string('nombre');
-            $table->boolean('ancla')->default(false);
+            $table->boolean('es_ancla')->default(false);
             $table->boolean('confirmado')->default(false);
             $table->softDeletes();
             $table->timestamps();

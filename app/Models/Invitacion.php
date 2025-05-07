@@ -12,7 +12,7 @@ class Invitacion extends Model
     use SoftDeletes;
     use HasFactory;
 
-    protected $fillable = ['evento_id', 'nombre', 'comentario', 'correo', 'telefono', 'tokenid'];
+    protected $fillable = ['evento_id', 'nombre', 'comentario', 'correo', 'telefono', 'tokenid', 'invitadoancla'];
     protected $casts = [ 'confirmado' => 'boolean'];
 
     public function evento()
