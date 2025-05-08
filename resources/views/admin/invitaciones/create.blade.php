@@ -39,11 +39,14 @@
 
         <h4>Invitados</h4>
         <div id="invitados">
-            <div class="mb-3 invitado">
-                <input type="text" name="invitados[]" class="form-control mb-2" placeholder="Nombre del invitado">
+            <div class="mb-3 invitado d-flex align-items-center">
+                <input type="text" name="invitados[]" class="form-control mb-2 me-2" placeholder="Nombre del invitado">
+                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarInvitado(this)">✕</button>
             </div>
         </div>
         <button type="button" class="btn btn-secondary mb-3" onclick="agregarInvitado()">Agregar otro invitado</button>
+
+
 
         <button type="submit" class="btn btn-primary">Guardar Invitación</button>
     </form>
@@ -52,11 +55,32 @@
 <script>
     function agregarInvitado() {
         const contenedor = document.getElementById('invitados');
+        const div = document.createElement('div');
+        div.className = 'mb-3 invitado d-flex align-items-center';
+
         const input = document.createElement('input');
+        input.type = 'text';
         input.name = 'invitados[]';
         input.placeholder = 'Nombre del invitado';
-        input.className = 'form-control mb-2';
-        contenedor.appendChild(input);
+        input.className = 'form-control mb-2 me-2';
+
+        const boton = document.createElement('button');
+        boton.type = 'button';
+        boton.className = 'btn btn-danger btn-sm';
+        boton.innerText = '✕';
+        boton.onclick = function () {
+            eliminarInvitado(boton);
+        };
+
+        div.appendChild(input);
+        div.appendChild(boton);
+        contenedor.appendChild(div);
+    }
+
+    function eliminarInvitado(boton) {
+        const div = boton.parentNode;
+        div.remove();
     }
 </script>
+
 @endsection

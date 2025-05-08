@@ -51,6 +51,7 @@ class InvitacionController extends Controller
      */
      public function store(Request $request)
      {
+      dd($request->all());
        $validated = $request->validate([
            'evento_id' => 'required|exists:eventos,id',
            'nombre' => 'required|string|max:255', // nombre de la invitación
