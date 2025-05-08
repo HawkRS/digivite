@@ -154,16 +154,28 @@ class InvitacionController extends Controller
     {
         $invitacion = Invitacion::where('tokenid', $tokenid)->with('invitados')->firstOrFail();
         $confirmados = $request->input('confirmados', []);
-        //dd($request->all());
+        $nombres = $request->input('nombres', []);
+
         $numboletos = 0;
+
         foreach ($invitacion->invitados as $invitado) {
-            // Solo actualizar si aún no estaba confirmado
+            // Actualiza nombre si no es ancla, no está confirmado y hay nombre nuevo
+            if (!$invitado->es_ancla && !$invitado->confirmado && isset($nombres[$invitado->id])) {
+                $nuevoNombre = trim($nombres[$invitado->id]);
+                if ($nuevoNombre !== '') {
+                    $invitado->nombre = $nuevoNombre;
+                }
+            }
+
+            // Confirmar asistencia si fue marcado
             if (!$invitado->confirmado && in_array($invitado->id, $confirmados)) {
                 $invitado->confirmado = true;
-                $invitado->save();
                 $numboletos += 1;
             }
+
+            $invitado->save();
         }
+
         $invitacion->boletos = $numboletos;
         $invitacion->confirmado = true;
         $invitacion->save();

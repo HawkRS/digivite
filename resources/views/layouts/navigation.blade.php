@@ -13,10 +13,13 @@
         <a class="nav-link" href="{{ route('eventos.create') }}"><i class="fa-solid fa-calendar-check"></i> crear Evento</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{{ route('invitaciones.create') }}"><i class="fa-solid fa-receipt"></i> Invitaciones</a>
+        <a class="nav-link" href="{{ route('invitaciones.index') }}"><i class="fa-solid fa-receipt"></i> lista de invitaciones</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link" href="{{ route('invitaciones.index') }}"><i class="fa-solid fa-users"></i> Lista de invitados</a>
+        <a class="nav-link" href="{{ route('invitaciones.create') }}"><i class="fa-solid fa-receipt"></i> Crear invitacion</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{{ route('invitados.index') }}"><i class="fa-solid fa-users"></i> Lista de invitados</a>
       </li>
       <li class="nav-item mt-4">
         <form action="{{ route('logout') }}" method="POST">

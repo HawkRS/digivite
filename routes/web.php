@@ -66,6 +66,7 @@ Route::prefix('admin')->group(function () {
         Route::get('editar/{id}', [InvitadoController::class, 'edit'])->name('invitados.edit');
         Route::post('actualizar/{id}', [InvitadoController::class, 'update'])->name('invitados.update');
         Route::post('borrar/{id}', [InvitadoController::class, 'destroy'])->name('invitados.destroy');
+        Route::get('/invitados/control/exportar', [InvitadoController::class, 'exportarPdf'])->name('invitados.exportar');
     });
 });
 

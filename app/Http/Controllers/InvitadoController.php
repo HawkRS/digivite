@@ -3,18 +3,42 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Invitacion;
+use App\Models\Invitado;
+use App\Models\Evento;
+use Carbon\Carbon;
+use PDF;
 
 class InvitadoController extends Controller
 {
+    private $f = 'admin.invitados.';
+
+    public function __construct()
+    {
+      $this->middleware('auth');
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-        //
-    }
+     public function index(Request $request)
+     {
+       $filtro = $request->get('filtro', 'todos');
+
+       $query = Invitado::with('invitacion.evento');
+
+       if ($filtro === 'confirmados') {
+         $query->where('confirmado', true);
+       } elseif ($filtro === 'no_confirmados') {
+         $query->where('confirmado', false);
+       }
+
+       $invitados = $query->get();
+
+       return view($this->f.'index', compact('invitados', 'filtro'));
+     }
 
     /**
      * Show the form for creating a new resource.
@@ -85,5 +109,24 @@ class InvitadoController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+
+    public function exportarPdf(Request $request)
+    {
+      $filtro = $request->get('filtro', 'todos');
+
+      $query = Invitado::with('invitacion.evento');
+
+      if ($filtro === 'confirmados') {
+        $query->where('confirmado', true);
+      } elseif ($filtro === 'no_confirmados') {
+        $query->where('confirmado', false);
+      }
+
+      $invitados = $query->get();
+
+      $pdf = \PDF::loadView('admin.invitados.reporte', compact('invitados', 'filtro'));
+      return $pdf->download("lista_invitados_{$filtro}.pdf");
     }
 }
