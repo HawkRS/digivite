@@ -15,7 +15,7 @@ class InvitacionController extends Controller
 
   public function __construct()
   {
-    $this->middleware('auth')->except(['confirmarPublica', 'guardarConfirmacion']);
+    $this->middleware('auth')->except(['confirmarPublica','mostrarLogin','verificarPassword','guardarConfirmacion']);
   }
 
   /**
