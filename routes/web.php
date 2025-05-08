@@ -49,12 +49,14 @@ Route::prefix('admin')->group(function () {
         Route::get('editar/{id}', [InvitacionController::class, 'edit'])->name('invitaciones.edit');
         Route::post('actualizar/{id}', [InvitacionController::class, 'update'])->name('invitaciones.update');
         Route::post('borrar/{id}', [InvitacionController::class, 'destroy'])->name('invitaciones.destroy');
+        Route::post('/invitaciones/{id}/correo', [InvitacionController::class, 'enviarCorreo'])->name('invitaciones.enviarCorreo');
+
+        // web.php
+        Route::get('/confirmar/login/{tokenid}', [InvitacionController::class, 'mostrarLogin'])->name('confirmacion.login');
+        Route::post('/confirmar/verificar/{tokenid}', [InvitacionController::class, 'verificarPassword'])->name('confirmacion.store');
         Route::get('/confirmar/{tokenid}', [InvitacionController::class, 'confirmarPublica'])->name('invitacion.publica');
         Route::post('/confirmar/{tokenid}', [InvitacionController::class, 'guardarConfirmacion'])->name('invitacion.confirmar');
 
-        // web.php
-        Route::get('/confirmar', [ConfirmacionController::class, 'form'])->name('confirmar.token');
-        Route::post('/confirmar', [ConfirmacionController::class, 'confirmarToken'])->name('confirmar.token.post');
 
     });
 

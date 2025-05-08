@@ -45,13 +45,35 @@
                         @endif
                     </td>
                     <td>
-                      <a href="{{route('invitacion.publica', ['tokenid'=>$inv->tokenid]) }}">Confirmacion</a>
-                        <a href="{{ route('invitaciones.edit', $inv->id) }}" class="btn btn-warning btn-sm">Editar</a>
-                        <form action="{{ route('invitaciones.destroy', $inv->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm">Eliminar</button>
-                        </form>
+                      <a href="{{route('invitacion.publica', ['tokenid'=>$inv->tokenid]) }}" class="btn btn-info btn-sm">Ver link</a>
+
+                      @if($inv->confirmado == false)
+                        @if($inv->telefono)
+                        <a
+                          class="btn btn-success btn-sm"
+                          target="_blank"
+                          href="https://api.whatsapp.com/send?phone={{ $inv->telefono }}&text={{ urlencode('Hola ' . $inv->nombre . ', te compartimos tu link de confirmación para el evento ' . $inv->evento->nombre . ': ' . route('confirmacion.login', $inv->tokenid) . ' - Tu contraseña es: ' . $inv->password) }}">
+                          Enviar por WhatsApp
+                        </a>
+                        @endif
+                      @endif
+
+                      @if($inv->confirmado == false)
+                        @if($inv->correo)
+                          <form action="{{ route('invitaciones.enviarCorreo', $inv->id) }}" method="POST" class="d-inline">
+                              @csrf
+                              <button class="btn btn-primary btn-sm">Enviar por correo</button>
+                          </form>
+                        @endif
+                      @endif
+
+                      <a href="{{ route('invitaciones.edit', $inv->id) }}" class="btn btn-warning btn-sm">Editar</a>
+
+                      <form action="{{ route('invitaciones.destroy', $inv->id) }}" method="POST" class="d-inline">
+                          @csrf
+                          @method('DELETE')
+                          <button class="btn btn-danger btn-sm">Eliminar</button>
+                      </form>
                     </td>
                 </tr>
             @endforeach
