@@ -51,14 +51,14 @@ class InvitacionController extends Controller
      */
      public function store(Request $request)
      {
-      dd($request->all());
+      //dd($request->all());
        $validated = $request->validate([
            'evento_id' => 'required|exists:eventos,id',
            'nombre' => 'required|string|max:255', // nombre de la invitación
            'comentario' => 'nullable|string',
            'correo' => 'nullable|email',
            'telefono' => 'nullable|string|max:20',
-           'invitado_ancla' => 'required|string|max:255',
+           'invitadoancla' => 'required|string|max:255',
            'invitados' => 'nullable|array',
            'invitados.*' => 'nullable|string|max:255',
        ]);
@@ -71,7 +71,7 @@ class InvitacionController extends Controller
 
        // Crear invitado ancla
        $invitacion->invitados()->create([
-         'nombre' => $validated['invitado_ancla'],
+         'nombre' => $validated['invitadoancla'],
          'confirmado' => false,
          'es_ancla' => true,
        ]);

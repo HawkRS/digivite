@@ -10,26 +10,40 @@
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
+    @if($invitacion->confirmado)
+        <div class="alert alert-info">Esta invitación ya fue confirmada. Gracias por confirmar tu asistencia.</div>
+    @endif
+
     <form method="POST" action="{{ route('invitacion.confirmar', $invitacion->tokenid) }}">
         @csrf
 
-        <h5>Selecciona a los invitados que asistirán:</h5>
+        <h5>Invitados:</h5>
         <ul class="list-group mb-3">
             @foreach($invitacion->invitados as $invitado)
                 <li class="list-group-item">
-                    <label>
-                        <input type="checkbox" name="confirmados[]" value="{{ $invitado->id }}"
-                            {{ $invitado->confirmado ? 'checked disabled' : '' }}>
-                        {{ $invitado->nombre }}
-                        @if($invitado->confirmado)
-                            <span class="badge bg-success">Confirmado</span>
-                        @endif
-                    </label>
+                    @if($invitado->confirmado)
+                        <strong>{{ $invitado->nombre }}</strong>
+                        <span class="badge bg-success ms-2">Confirmado</span>
+                    @else
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="confirmados[]" value="{{ $invitado->id }}">
+                            <label class="form-check-label">
+                                @if($invitado->es_ancla)
+                                    {{ $invitado->nombre }}
+                                @else
+                                    <input type="text" name="nombres[{{ $invitado->id }}]" class="form-control d-inline-block w-auto" value="{{ $invitado->nombre }}">
+                                @endif
+                            </label>
+                        </div>
+                    @endif
                 </li>
             @endforeach
         </ul>
 
-        <button type="submit" class="btn btn-primary">Guardar Confirmación</button>
+        @unless($invitacion->confirmado)
+            <button type="submit" class="btn btn-primary">Guardar Confirmación</button>
+        @endunless
     </form>
 </div>
 @endsection
+

@@ -22,7 +22,7 @@
         </div>
         <div class="mb-3">
             <label class="form-label">Invitado Ancla</label>
-            <input type="text" name="invitado_ancla" class="form-control" required>
+            <input type="text" name="invitadoancla" class="form-control" required>
         </div>
         <div class="mb-3">
             <label class="form-label">Comentario</label>

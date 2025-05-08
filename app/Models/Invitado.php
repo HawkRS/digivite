@@ -11,10 +11,8 @@ class Invitado extends Model
     use HasFactory;
     use SoftDeletes;
 
-    protected $fillable = ['invitacion_id', 'nombre'];
-    protected $casts = [
-        'confirmado' => 'boolean',
-    ];
+    protected $fillable = ['invitacion_id', 'nombre', 'es_ancla'];
+    protected $casts = ['confirmado' => 'boolean',];
 
     public function invitacion()
     {
