@@ -70,6 +70,15 @@ Route::prefix('admin')->group(function () {
         Route::post('borrar/{id}', [InvitadoController::class, 'destroy'])->name('invitados.destroy');
         Route::get('/invitados/control/exportar', [InvitadoController::class, 'exportarPdf'])->name('invitados.exportar');
     });
+
+    Route::prefix('usuarios')->group(function () {
+        Route::get('',[UsersController::class, 'index'])->name('users.index');
+        Route::get('registrar', [UsersController::class, 'create'])->name('users.create');
+        Route::post('guardar', [UsersController::class, 'store'])->name('users.store');
+        Route::get('editar/{id}', [UsersController::class, 'edit'])->name('users.edit');
+        Route::post('actualizar/{id}', [UsersController::class, 'update'])->name('users.update');
+        Route::post('borrar/{id}', [UsersController::class, 'destroy'])->name('users.destroy');
+    });
 });
 
 
